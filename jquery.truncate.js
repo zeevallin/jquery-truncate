@@ -22,7 +22,7 @@
     this.text("");
     var top = text.length, bottom = 0, self = this;
     function _fn(s) {
-        if (self.fitsTruncationSpecs(s.rtrim() + settings.omission , maxHeight, settings)) {
+        if (self.fitsTruncationSpecs(_rtrim(s) + settings.omission , maxHeight, settings)) {
             bottom = s.length;
         } else {
             top = s.length;
@@ -32,7 +32,7 @@
             return _fn(text.substr(0,(top + bottom)/2));
         }
 
-        return text.substr(0, bottom) + settings.omission;
+        return _rtrim(text.substr(0, bottom)) + settings.omission;
     };
 
     return this[settings.html? 'html': 'text'](_fn(text.substr(0, text.length / 2)));
