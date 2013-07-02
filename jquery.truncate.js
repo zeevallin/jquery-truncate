@@ -1,5 +1,8 @@
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var _rtrim = function(s) {
+      return s.replace(/\s+$/g, "");
+  };
+
   jQuery.fn.fitsTruncationSpecs = function(content, maxHeight, settings) {
     var itFits, oldHTML, oldText;
     if (settings.html) {
@@ -16,33 +19,23 @@
     return itFits;
   };
   jQuery.fn.performTruncation = function(text, width, lheight, maxHeight, settings) {
-    var character, characters, currentText, hasNotYetExceededSpecs, workingText, _fn, _i, _len;
     this.text("");
-    characters = text.split("");
-    hasNotYetExceededSpecs = true;
-    workingText = "";
-    currentText = workingText;
-    _fn = __bind(function(character) {
-      var textToTest;
-      if (hasNotYetExceededSpecs) {
-        workingText += character;
-        textToTest = workingText + settings.omission;
-        if (this.fitsTruncationSpecs(textToTest, maxHeight, settings)) {
-          return currentText = textToTest;
+    var top = text.length, bottom = 0, self = this;
+    function _fn(s) {
+        if (self.fitsTruncationSpecs(s.rtrim() + settings.omission , maxHeight, settings)) {
+            bottom = s.length;
         } else {
-          return hasNotYetExceededSpecs = false;
+            top = s.length;
         }
-      }
-    }, this);
-    for (_i = 0, _len = characters.length; _i < _len; _i++) {
-      character = characters[_i];
-      _fn(character);
-    }
-    if (settings.html) {
-      return this.html(currentText);
-    } else {
-      return this.text(currentText);
-    }
+
+        if (top > bottom + 1) {
+            return _fn(text.substr(0,(top + bottom)/2));
+        }
+
+        return text.substr(0, bottom) + settings.omission;
+    };
+
+    return this[settings.html? 'html': 'text'](_fn(text.substr(0, text.length / 2)));
   };
   jQuery.fn.truncate = function(options) {
     var settings;
