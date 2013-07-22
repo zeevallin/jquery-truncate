@@ -21,21 +21,18 @@
   jQuery.fn.performTruncation = function(text, width, lheight, maxHeight, settings) {
     this.text("");
     var top = text.length, bottom = 0, self = this;
-    function _fn(s) {
-        if (self.fitsTruncationSpecs(_rtrim(s) + settings.omission , maxHeight, settings)) {
-            bottom = s.length;
-        } else {
-            top = s.length;
+    var _fn = text.substr(0, text.length / 2);
+        while (top > bottom + 1) {
+            if (self.fitsTruncationSpecs(_rtrim(_fn) + settings.omission, maxHeight, settings)) {
+                bottom = _fn.length;
+            } else {
+                top = _fn.length;
+            }
+            _fn = text.substr(0, (top + bottom) / 2);
         }
+        _fn = _rtrim(text.substr(0, bottom)) + settings.omission;
 
-        if (top > bottom + 1) {
-            return _fn(text.substr(0,(top + bottom)/2));
-        }
-
-        return _rtrim(text.substr(0, bottom)) + settings.omission;
-    };
-
-    return this[settings.html? 'html': 'text'](_fn(text.substr(0, text.length / 2)));
+        return this[settings.html ? 'html' : 'text'](_fn);
   };
   jQuery.fn.truncate = function(options) {
     var settings;
